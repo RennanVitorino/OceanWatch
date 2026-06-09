@@ -1,0 +1,54 @@
+name: Atualizar Dados OceanWatch
+
+on:
+  schedule:
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  atualizar-e-publicar:
+    name: Atualizar dados + Deploy GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install requests
+
+      - name: Atualizar dados_noaa.json via API Copernicus
+        run: python scripts/atualizar_dados.py
+
+      - name: Commit dos dados atualizados
+        run: |
+          git config user.name  "OceanWatch Bot"
+          git config user.email "oceanwatch-bot@github-actions"
+          git add dados_noaa.json
+          git diff --cached --quiet || git commit -m "🛰 Dados atualizados — $(date -u +'%Y-%m-%d')"
+          git push
+
+      - name: Preparar site para deploy
+        uses: actions/configure-pages@v5
+
+      - name: Empacotar arquivos do site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Deploy no GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
