@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OceanWatch — Monitorização de Lixo Marítimo via Satélite</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --surface: #111827;
+      --card: #1a2236;
+      --border: #1e3a5f;
+      --accent: #00b4d8;
+      --accent2: #90e0ef;
+      --warn: #f97316;
+      --danger: #ef4444;
+      --ok: #22c55e;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --font: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+
+    .logo svg { width: 28px; height: 28px; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .live-badge {
+      background: rgba(34,197,94,0.15);
+      border: 1px solid var(--ok);
+      color: var(--ok);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--ok);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .satellite-info {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── LAYOUT ── */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 300px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-section h3 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* Stats cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .stat-card .value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-card .label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* Filters */
+    .filter-group { margin-bottom: 12px; }
+    .filter-group label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    select, input[type="range"] {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    select:focus { border-color: var(--accent); }
+
+    .range-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Legend */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      margin-bottom: 7px;
+    }
+
+    .legend-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Chart */
+    .chart-wrap {
+      padding: 14px 14px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chart-wrap h3 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* Ocorrências recentes */
+    .event-list { display: flex; flex-direction: column; gap: 7px; }
+
+    .event-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--warn);
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .event-item:hover { border-color: var(--accent); }
+    .event-item.danger { border-left-color: var(--danger); }
+    .event-item.ok { border-left-color: var(--ok); }
+
+    .event-title { font-size: 0.78rem; font-weight: 600; margin-bottom: 2px; }
+    .event-meta { font-size: 0.68rem; color: var(--muted); }
+
+    /* ── MAP ── */
+    .map-container {
+      flex: 1;
+      position: relative;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Map toolbar */
+    .map-toolbar {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 999;
+      display: flex;
+      gap: 8px;
+    }
+
+    .toolbar-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font);
+    }
+
+    .toolbar-btn:hover, .toolbar-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    /* Info popup overlay */
+    .info-panel {
+      position: absolute;
+      bottom: 24px;
+      right: 16px;
+      z-index: 999;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      width: 260px;
+      display: none;
+    }
+
+    .info-panel.visible { display: block; }
+
+    .info-panel h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .info-row:last-child { border: none; }
+    .info-row .key { color: var(--muted); }
+    .info-row .val { font-weight: 600; color: var(--text); }
+
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 12px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.1rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* Leaflet overrides */
+    .leaflet-popup-content-wrapper {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font);
+    }
+
+    .leaflet-popup-tip { background: var(--card); }
+
+    .popup-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .popup-row {
+      font-size: 0.75rem;
+      margin-bottom: 3px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .popup-row .k { color: var(--muted); }
+
+    .severity-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .sev-high { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .sev-medium { background: rgba(249,115,22,0.2); color: #f97316; }
+    .sev-low { background: rgba(34,197,94,0.2); color: #22c55e; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="12" stroke="#00b4d8" stroke-width="1.5"/>
+      <path d="M2 14 Q7 11 14 14 Q21 17 26 14" stroke="#00b4d8" stroke-width="1.5" fill="none"/>
+      <path d="M2 14 Q7 17 14 14 Q21 11 26 14" stroke="#00b4d8" stroke-width="0.8" fill="none" opacity="0.5"/>
+      <circle cx="14" cy="4" r="2" fill="#00b4d8"/>
+      <line x1="14" y1="6" x2="14" y2="9" stroke="#00b4d8" stroke-width="1.2"/>
+    </svg>
+    OceanWatch
+  </div>
+  <div class="header-right">
+    <span class="satellite-info">Sentinel-2 · Resolução 10m/px · ESA Copernicus</span>
+    <span id="data-status" style="font-size:0.72rem;color:#94a3b8;">⟳ Carregando dados NOAA...</span>
+    <div class="live-badge"><div class="live-dot"></div> AO VIVO</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Stats -->
+    <div class="sidebar-section">
+      <h3>Estatísticas Globais</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="value" id="stat-detections">247</div>
+          <div class="label">Detecções Ativas</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color:#ef4444" id="stat-high">38</div>
+          <div class="label">Concentração Alta</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color:#f97316" id="stat-area">184</div>
+          <div class="label">Área Total (km²)</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color:#22c55e" id="stat-pass">3</div>
+          <div class="label">Satélites Ativos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="sidebar-section">
+      <h3>Filtros</h3>
+      <div class="filter-group">
+        <label>Tipo de Detrito</label>
+        <select id="filter-type" onchange="applyFilters()">
+          <option value="all">Todos</option>
+          <option value="plastic">Plástico</option>
+          <option value="organic">Mat. Orgânico</option>
+          <option value="mixed">Misto</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Severidade Mínima</label>
+        <select id="filter-sev" onchange="applyFilters()">
+          <option value="all">Todas</option>
+          <option value="high">Alta</option>
+          <option value="medium">Média</option>
+          <option value="low">Baixa</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Período (últimos <span id="days-label">30</span> dias)</label>
+        <input type="range" id="filter-days" min="7" max="365" value="30"
+               oninput="document.getElementById('days-label').textContent=this.value; applyFilters()"/>
+        <div class="range-row"><span>7d</span><span>1 ano</span></div>
+      </div>
+      <div class="filter-group">
+        <label>Camada do Mapa</label>
+        <select id="filter-layer" onchange="changeLayer()">
+          <option value="ocean">Oceânico (ESRI)</option>
+          <option value="satellite" selected>Satélite</option>
+          <option value="dark">Mapa Escuro</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="sidebar-section">
+      <h3>Legenda</h3>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#ef4444;box-shadow:0 0 6px #ef4444"></div>
+        <span>Alta concentração (&gt;50 ton/km²)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#f97316;box-shadow:0 0 6px #f97316"></div>
+        <span>Média concentração (10–50 ton/km²)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#22c55e;box-shadow:0 0 6px #22c55e"></div>
+        <span>Baixa concentração (&lt;10 ton/km²)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#ef4444;box-shadow:0 0 6px #ef4444;border-radius:2px"></div>
+        <span>Trajetória prevista de deriva</span>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-wrap">
+      <h3>Detecções por Mês</h3>
+      <canvas id="chart-monthly" height="140"></canvas>
+    </div>
+
+    <!-- Eventos -->
+    <div class="sidebar-section">
+      <h3>Ocorrências Recentes</h3>
+      <div class="event-list">
+        <div class="event-item danger" onclick="flyTo(31.0, -29.5, 7)">
+          <div class="event-title">Mancha Grande — Atlântico Sul</div>
+          <div class="event-meta">~42 km² · Plástico · Hoje 06:14 UTC</div>
+        </div>
+        <div class="event-item" onclick="flyTo(15.3, 55.8, 7)">
+          <div class="event-title">Acumulação — Mar Arábico</div>
+          <div class="event-meta">~18 km² · Misto · Ontem 22:40 UTC</div>
+        </div>
+        <div class="event-item" onclick="flyTo(13.5, 121.0, 7)">
+          <div class="event-title">Derrame Costeiro — Mar da China</div>
+          <div class="event-meta">~9 km² · Plástico · 2 dias atrás</div>
+        </div>
+        <div class="event-item ok" onclick="flyTo(-8.5, -14.2, 8)">
+          <div class="event-title">Monitoramento — Ilha de Ascensão</div>
+          <div class="event-meta">~3 km² · Orgânico · 3 dias atrás</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+  <!-- MAP -->
+  <div class="map-container">
+    <div class="map-toolbar">
+      <button class="toolbar-btn active" id="btn-clusters" onclick="toggleClusters(this)">Clusters</button>
+      <button class="toolbar-btn" id="btn-heat" onclick="toggleHeatMode(this)">Mapa de Calor</button>
+      <button class="toolbar-btn" id="btn-drift" onclick="toggleDrift(this)">Trajetórias</button>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Info panel -->
+    <div class="info-panel" id="info-panel">
+      <button class="close-btn" onclick="document.getElementById('info-panel').classList.remove('visible')">×</button>
+      <h4 id="ip-title">Detalhes da Ocorrência</h4>
+      <div id="ip-content"></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ─────────────────────────────────────────────
+//  DADOS: carregados via fetch() do arquivo
+//  dados_noaa.json (fonte: NOAA NCEI Marine
+//  Microplastics Database, Nyadjro et al. 2023)
+// ─────────────────────────────────────────────
+let debrisData = [];
+let metaDados = {};
+
+async function carregarDados() {
+  const statusEl = document.getElementById('data-status');
+  try {
+    statusEl.textContent = '⟳ Carregando dados NOAA...';
+    const res = await fetch('dados_noaa.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    debrisData = json.deteccoes;
+    metaDados  = json.meta;
+    statusEl.innerHTML = `✓ ${debrisData.length} detecções · NOAA NCEI · <span style="color:#94a3b8">Atualizado: ${metaDados.ultima_atualizacao}</span>`;
+    statusEl.style.color = '#22c55e';
+    iniciarMapa();
+  } catch (err) {
+    statusEl.textContent = `✗ Erro ao carregar dados: ${err.message}`;
+    statusEl.style.color = '#ef4444';
+  }
+}
+
+function iniciarMapa() {
+
+// ─── POPUP DO MAPA ─────────────────────────────
+const popupEl = document.getElementById('info-panel');
+
+// Trajetórias de deriva (polylines simuladas)
+const driftPaths = [
+  [[32, -143], [33, -138], [34, -132], [33, -126], [31, -120]],
+  [[31,  -29], [32,  -25], [31,  -18], [29,  -12], [27,   -5]],
+  [[38.5,  13], [39,   17], [38,   21], [36,   24], [35,   28]],
+  [[13.5, 121], [12,  118], [10,  115], [8,   110]],
+];
+
+// ─── MAP SETUP ─────────────────────────────────
+// Usa as instâncias globais criadas na inicialização
+const map    = window._map;
+const layers = window._layers;
+
+window.changeLayer = function changeLayer() {
+  const v = document.getElementById('filter-layer').value;
+  Object.values(layers).forEach(l => map.removeLayer(l));
+  layers[v].addTo(map);
+}
+
+// ─── MARKERS ───────────────────────────────────
+const colorMap = { high: '#ef4444', medium: '#f97316', low: '#22c55e' };
+const labelMap = { high: 'Alta', medium: 'Média', low: 'Baixa' };
+const typeLabel = { plastic: 'Plástico', organic: 'Mat. Orgânico', mixed: 'Misto' };
+
+let markersLayer = L.layerGroup().addTo(map);
+let driftLayer   = L.layerGroup();
+let showDrift    = false;
+let showHeat     = false;
+
+function makeMarker(d) {
+  const c = colorMap[d.sev];
+  const r = d.sev === 'high' ? 14 : d.sev === 'medium' ? 10 : 7;
+
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="
+      width:${r*2}px;height:${r*2}px;
+      background:${c}33;
+      border:2px solid ${c};
+      border-radius:50%;
+      box-shadow:0 0 ${r*1.5}px ${c}88;
+      display:flex;align-items:center;justify-content:center;
+    "><div style="width:${r*0.7}px;height:${r*0.7}px;background:${c};border-radius:50%"></div></div>`,
+    iconSize: [r*2, r*2],
+    iconAnchor: [r, r]
+  });
+
+  const m = L.marker([d.lat, d.lng], { icon });
+  m.bindPopup(`
+    <div class="popup-title">📡 ${d.name}</div>
+    <div class="popup-row"><span class="k">Tipo:</span> ${typeLabel[d.type]}</div>
+    <div class="popup-row"><span class="k">Área:</span> ${d.area} km²</div>
+    <div class="popup-row"><span class="k">Densidade:</span> ~${d.density} ton/km²</div>
+    <div class="popup-row"><span class="k">Satélite:</span> ${d.sat}</div>
+    <div class="popup-row"><span class="k">Confiança ML:</span> ${d.conf}%</div>
+    <div class="popup-row"><span class="k">Detecção:</span> ${d.date}</div>
+    <div class="popup-row"><span class="k">Coord.:</span> ${d.lat.toFixed(2)}°, ${d.lng.toFixed(2)}°</div>
+    <div class="popup-row"><span class="k">Fonte:</span> ${d.fonte || 'NOAA NCEI'}</div>
+    <span class="severity-badge sev-${d.sev}">Severidade ${labelMap[d.sev]}</span>
+  `);
+
+  m._data = d;
+  return m;
+}
+
+function renderMarkers(data) {
+  markersLayer.clearLayers();
+  data.forEach(d => markersLayer.addLayer(makeMarker(d)));
+}
+
+renderMarkers(debrisData);
+
+// ─── HEAT MODE ─────────────────────────────────
+let heatLayer = null;
+
+window.toggleHeatMode = function toggleHeatMode(btn) {
+  showHeat = !showHeat;
+  btn.classList.toggle('active', showHeat);
+  document.getElementById('btn-clusters').classList.toggle('active', !showHeat);
+
+  if (showHeat) {
+    markersLayer.clearLayers();
+    // Círculos de calor simulados
+    filteredData().forEach(d => {
+      const c = colorMap[d.sev];
+      L.circle([d.lat, d.lng], {
+        radius: Math.sqrt(d.area) * 15000,
+        color: c,
+        fillColor: c,
+        fillOpacity: 0.15,
+        weight: 1,
+        opacity: 0.5
+      }).addTo(markersLayer);
+    });
+  } else {
+    applyFilters();
+  }
+}
+
+// ─── DRIFT LINES ───────────────────────────────
+driftPaths.forEach(path => {
+  L.polyline(path, {
+    color: '#ef4444',
+    weight: 2,
+    opacity: 0.8,
+    dashArray: '6,6'
+  }).addTo(driftLayer);
+
+  // Arrow animation sim
+  const mid = path[Math.floor(path.length / 2)];
+  L.circleMarker(mid, {
+    radius: 4,
+    color: '#ef4444',
+    fillColor: '#ef4444',
+    fillOpacity: 0.8,
+    weight: 1
+  }).addTo(driftLayer);
+});
+
+window.toggleDrift = function toggleDrift(btn) {
+  showDrift = !showDrift;
+  btn.classList.toggle('active', showDrift);
+  if (showDrift) driftLayer.addTo(map);
+  else map.removeLayer(driftLayer);
+}
+
+window.toggleClusters = function toggleClusters(btn) {
+  showHeat = false;
+  btn.classList.add('active');
+  document.getElementById('btn-heat').classList.remove('active');
+  applyFilters();
+}
+
+// ─── FILTERS ───────────────────────────────────
+function filteredData() {
+  const type = document.getElementById('filter-type').value;
+  const sev  = document.getElementById('filter-sev').value;
+  const days = parseInt(document.getElementById('filter-days').value);
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+
+  return debrisData.filter(d => {
+    if (type !== 'all' && d.type !== type) return false;
+    if (sev  !== 'all' && d.sev  !== sev)  return false;
+    const dd = new Date(d.date);
+    if (dd < cutoff) return false;
+    return true;
+  });
+}
+
+window.applyFilters = function applyFilters() {
+  const data = filteredData();
+  if (showHeat) { toggleHeatMode(document.getElementById('btn-heat')); toggleHeatMode(document.getElementById('btn-heat')); return; }
+  renderMarkers(data);
+  // update stats
+  document.getElementById('stat-detections').textContent = data.length;
+  document.getElementById('stat-high').textContent = data.filter(d=>d.sev==='high').length;
+  const totalArea = data.reduce((s,d)=>s+d.area,0);
+  document.getElementById('stat-area').textContent = totalArea;
+}
+
+window.flyTo = function flyTo(lat, lng, zoom) {
+  map.flyTo([lat, lng], zoom, { duration: 1.5 });
+}
+
+// ─── CHART ─────────────────────────────────────
+const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const monthData = [48,52,61,55,70,67,82,88,75,64,59,71];
+
+new Chart(document.getElementById('chart-monthly'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'Detecções',
+      data: monthData,
+      backgroundColor: monthData.map((v,i) => i===5 ? '#00b4d8' : '#1e3a5f'),
+      borderColor: monthData.map((v,i) => i===5 ? '#00b4d8' : '#1e3a5f'),
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#111827', titleColor:'#e2e8f0', bodyColor:'#94a3b8' } },
+    scales: {
+      x: { ticks: { color:'#94a3b8', font:{size:10} }, grid: { display:false } },
+      y: { ticks: { color:'#94a3b8', font:{size:10} }, grid: { color:'#1e3a5f' } }
+    }
+  }
+});
+
+} // fim iniciarMapa()
+
+// ─── INICIALIZAÇÃO ─────────────────────────────
+// Mapa e camadas são criados imediatamente (não dependem dos dados)
+window._map = L.map('map', { center: [15, 0], zoom: 3, zoomControl: true, attributionControl: false });
+window._layers = {
+  ocean:     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 }),
+  satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 }),
+  dark:      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 18, subdomains:'abcd' })
+};
+window._layers.satellite.addTo(window._map);
+
+// Dados carregados de forma assíncrona
+carregarDados();
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
