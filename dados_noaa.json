@@ -4,7 +4,7 @@
     "referencia": "Nyadjro et al., Scientific Data 10, 726 (2023). DOI: 10.1038/s41597-023-02632-y",
     "url_dataset": "https://www.ncei.noaa.gov/products/microplastics",
     "licenca": "NOAA Open Data — Domínio Público",
-    "ultima_atualizacao": "2026-06-08",
+    "ultima_atualizacao": "2026-06-09",
     "total_registros": 54,
     "nota": "Amostra representativa de eventos de alta relevância do banco de dados global NCEI. Para dados completos, acesse ncei.noaa.gov/products/microplastics"
   },
@@ -409,7 +409,7 @@
       "name": "Ilha de Ascensão — Monitoramento Remoto",
       "conf": 69,
       "sat": "Sentinel-2B",
-      "date": "2026-05-29",
+      "date": "2026-06-07",
       "fonte": "NCEI"
     },
     {
