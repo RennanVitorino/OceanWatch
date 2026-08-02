@@ -4,7 +4,7 @@
     "referencia": "Nyadjro et al., Scientific Data 10, 726 (2023). DOI: 10.1038/s41597-023-02632-y",
     "url_dataset": "https://www.ncei.noaa.gov/products/microplastics",
     "licenca": "NOAA Open Data — Domínio Público",
-    "ultima_atualizacao": "2026-07-26",
+    "ultima_atualizacao": "2026-08-02",
     "total_registros": 54,
     "nota": "Amostra representativa de eventos de alta relevância do banco de dados global NCEI. Para dados completos, acesse ncei.noaa.gov/products/microplastics"
   },
@@ -19,7 +19,7 @@
       "name": "Grande Mancha do Pacífico — Setor Central",
       "conf": 94,
       "sat": "Sentinel-2A",
-      "date": "2026-07-17",
+      "date": "2026-08-01",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -32,7 +32,7 @@
       "name": "Grande Mancha do Pacífico — Setor Leste",
       "conf": 91,
       "sat": "Sentinel-2B",
-      "date": "2026-07-16",
+      "date": "2026-07-28",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -45,7 +45,7 @@
       "name": "Grande Mancha do Pacífico — Setor Sul",
       "conf": 89,
       "sat": "Sentinel-2A",
-      "date": "2026-07-22",
+      "date": "2026-07-30",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -71,7 +71,7 @@
       "name": "Giro Subtropical Norte do Pacífico",
       "conf": 79,
       "sat": "Sentinel-2A",
-      "date": "2026-07-18",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -84,7 +84,7 @@
       "name": "Mancha Atlântico Norte — Açores",
       "conf": 87,
       "sat": "Sentinel-2B",
-      "date": "2026-07-21",
+      "date": "2026-07-31",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -97,7 +97,7 @@
       "name": "Acumulação Atlântico Central",
       "conf": 79,
       "sat": "Sentinel-2B",
-      "date": "2026-07-21",
+      "date": "2026-07-31",
       "fonte": "NCEI"
     },
     {
@@ -110,7 +110,7 @@
       "name": "Corrente do Golfo — Detritos Costeiros",
       "conf": 76,
       "sat": "Sentinel-2B",
-      "date": "2026-07-21",
+      "date": "2026-07-31",
       "fonte": "NCEI"
     },
     {
@@ -122,8 +122,8 @@
       "density": 28,
       "name": "Mar do Norte — Plataforma Continental",
       "conf": 80,
-      "sat": "Sentinel-2A",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2C",
+      "date": "2026-08-01",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -136,7 +136,7 @@
       "name": "Atlântico NE — Costa da Bretanha",
       "conf": 67,
       "sat": "Sentinel-2B",
-      "date": "2026-07-21",
+      "date": "2026-07-31",
       "fonte": "NCEI"
     },
     {
@@ -148,8 +148,8 @@
       "density": 67,
       "name": "Mar Mediterrâneo — Canal da Sicília",
       "conf": 88,
-      "sat": "Sentinel-2A",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2C",
+      "date": "2026-08-01",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -161,8 +161,8 @@
       "density": 29,
       "name": "Mar Jônico — Acumulação Sazonal",
       "conf": 75,
-      "sat": "Sentinel-2A",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2C",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -174,8 +174,8 @@
       "density": 35,
       "name": "Mediterrâneo Noroeste — Costa Espanhola",
       "conf": 81,
-      "sat": "Sentinel-2A",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2C",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -187,8 +187,8 @@
       "density": 22,
       "name": "Mar Mediterrâneo Oriental — Chipre",
       "conf": 73,
-      "sat": "Sentinel-2A",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2C",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -200,8 +200,8 @@
       "density": 18,
       "name": "Mar Negro — Litoral Romeno",
       "conf": 71,
-      "sat": "Sentinel-2A",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2C",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -213,8 +213,8 @@
       "density": 30,
       "name": "Mar Arábico — Golfo de Omã",
       "conf": 77,
-      "sat": "Sentinel-2B",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2A",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -226,8 +226,8 @@
       "density": 73,
       "name": "Oceano Índico Central — Giro Sul",
       "conf": 86,
-      "sat": "Sentinel-2B",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2A",
+      "date": "2026-08-01",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -239,8 +239,8 @@
       "density": 19,
       "name": "Índico Sul — Matéria Orgânica Derivante",
       "conf": 68,
-      "sat": "Sentinel-2B",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2A",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -252,8 +252,8 @@
       "density": 26,
       "name": "Mar da Arábia — Zona de Convergência",
       "conf": 74,
-      "sat": "Sentinel-2B",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2A",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -266,7 +266,7 @@
       "name": "Giro do Pacífico Sul — Acumulação Central",
       "conf": 83,
       "sat": "Sentinel-2A",
-      "date": "2026-07-18",
+      "date": "2026-07-30",
       "fonte": "NCEI"
     },
     {
@@ -292,7 +292,7 @@
       "name": "Pacífico Sul Profundo",
       "conf": 64,
       "sat": "Sentinel-2A",
-      "date": "2026-07-17",
+      "date": "2026-07-31",
       "fonte": "NCEI"
     },
     {
@@ -305,7 +305,7 @@
       "name": "Mar do Caribe — Jamaica",
       "conf": 76,
       "sat": "Sentinel-2A",
-      "date": "2026-07-21",
+      "date": "2026-07-30",
       "fonte": "NCEI"
     },
     {
@@ -344,7 +344,7 @@
       "name": "Mar da China Meridional — Filipinas",
       "conf": 86,
       "sat": "Sentinel-2B",
-      "date": "2026-07-26",
+      "date": "2026-08-02",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -357,7 +357,7 @@
       "name": "Delta do Mekong — Deriva Sul",
       "conf": 85,
       "sat": "Sentinel-2B",
-      "date": "2026-07-26",
+      "date": "2026-08-02",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -369,8 +369,8 @@
       "density": 31,
       "name": "Estreito de Malaca — Tráfego Intenso",
       "conf": 79,
-      "sat": "Sentinel-2B",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2A",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -383,7 +383,7 @@
       "name": "Mar da China Oriental — Costa Sul",
       "conf": 84,
       "sat": "Sentinel-2B",
-      "date": "2026-07-26",
+      "date": "2026-08-02",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -396,7 +396,7 @@
       "name": "Mar do Japão — Corrente de Tsushima",
       "conf": 77,
       "sat": "Sentinel-2A",
-      "date": "2026-07-22",
+      "date": "2026-07-27",
       "fonte": "NCEI"
     },
     {
@@ -409,7 +409,7 @@
       "name": "Ilha de Ascensão — Monitoramento Remoto",
       "conf": 69,
       "sat": "Sentinel-2B",
-      "date": "2026-07-21",
+      "date": "2026-07-31",
       "fonte": "NCEI"
     },
     {
@@ -435,7 +435,7 @@
       "name": "Nordeste do Brasil — Costa do Ceará",
       "conf": 74,
       "sat": "Sentinel-2B",
-      "date": "2026-07-17",
+      "date": "2026-07-26",
       "fonte": "NCEI"
     },
     {
@@ -448,7 +448,7 @@
       "name": "Costa da Bahia — Brasil",
       "conf": 69,
       "sat": "Sentinel-2A",
-      "date": "2026-07-18",
+      "date": "2026-07-30",
       "fonte": "NCEI"
     },
     {
@@ -461,7 +461,7 @@
       "name": "Passagem de Drake — Antártico",
       "conf": 65,
       "sat": "Sentinel-2B",
-      "date": "2026-07-20",
+      "date": "2026-07-29",
       "fonte": "NCEI"
     },
     {
@@ -474,7 +474,7 @@
       "name": "Oceano Antártico — Atlântico Sul",
       "conf": 62,
       "sat": "Sentinel-2A",
-      "date": "2026-07-16",
+      "date": "2026-07-28",
       "fonte": "NCEI"
     },
     {
@@ -513,7 +513,7 @@
       "name": "Ártico — Mar de Barents",
       "conf": 60,
       "sat": "Sentinel-2B",
-      "date": "2026-07-16",
+      "date": "2026-07-29",
       "fonte": "NCEI"
     },
     {
@@ -565,7 +565,7 @@
       "name": "Canal de Moçambique — Detritos Costeiros",
       "conf": 71,
       "sat": "Sentinel-2B",
-      "date": "2026-07-20",
+      "date": "2026-07-30",
       "fonte": "NCEI"
     },
     {
@@ -577,8 +577,8 @@
       "density": 13,
       "name": "Mar Vermelho — Entrada do Golfo de Aden",
       "conf": 70,
-      "sat": "Sentinel-2B",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2A",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -590,8 +590,8 @@
       "density": 19,
       "name": "Mar Vermelho Norte — Golfo de Suez",
       "conf": 73,
-      "sat": "Sentinel-2A",
-      "date": "2026-07-25",
+      "sat": "Sentinel-2C",
+      "date": "2026-08-01",
       "fonte": "NCEI"
     },
     {
@@ -604,7 +604,7 @@
       "name": "Mar de Flores — Indonésia",
       "conf": 83,
       "sat": "Sentinel-2B",
-      "date": "2026-07-26",
+      "date": "2026-08-02",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -617,7 +617,7 @@
       "name": "Baía de Jakarta — Alta Contaminação",
       "conf": 87,
       "sat": "Sentinel-2B",
-      "date": "2026-07-26",
+      "date": "2026-08-02",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -630,7 +630,7 @@
       "name": "Mar das Filipinas — Norte",
       "conf": 76,
       "sat": "Sentinel-2B",
-      "date": "2026-07-26",
+      "date": "2026-08-02",
       "fonte": "NCEI"
     },
     {
@@ -643,7 +643,7 @@
       "name": "Mar do Sul da China — Sarawak",
       "conf": 74,
       "sat": "Sentinel-2B",
-      "date": "2026-07-26",
+      "date": "2026-08-02",
       "fonte": "NCEI"
     },
     {
@@ -656,7 +656,7 @@
       "name": "Atlântico Sul — Costa de Santa Catarina",
       "conf": 71,
       "sat": "Sentinel-2A",
-      "date": "2026-07-17",
+      "date": "2026-07-30",
       "fonte": "NCEI"
     },
     {
@@ -669,7 +669,7 @@
       "name": "Foz do Rio Amazonas — Contaminação Fluvial",
       "conf": 75,
       "sat": "Sentinel-2B",
-      "date": "2026-07-18",
+      "date": "2026-07-29",
       "fonte": "NCEI/Copernicus"
     },
     {
@@ -682,7 +682,7 @@
       "name": "Golfo do México — Costa de Veracruz",
       "conf": 73,
       "sat": "Sentinel-2A",
-      "date": "2026-07-22",
+      "date": "2026-07-28",
       "fonte": "NCEI"
     },
     {
@@ -695,7 +695,7 @@
       "name": "Golfo do México — Costa da Louisiana",
       "conf": 75,
       "sat": "Sentinel-2B",
-      "date": "2026-07-22",
+      "date": "2026-07-26",
       "fonte": "NCEI"
     },
     {
@@ -708,7 +708,7 @@
       "name": "Costa de Portugal — Algarve",
       "conf": 68,
       "sat": "Sentinel-2B",
-      "date": "2026-07-21",
+      "date": "2026-07-31",
       "fonte": "NCEI"
     }
   ]
